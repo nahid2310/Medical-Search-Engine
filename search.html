@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zephyr Search</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+</head>
+<body>
+  <div class="header">
+    <button class="icon-button" onclick="window.location.href='index.html'">&#8592;</button>
+    <h1 id="pageTitle"></h1>
+    <button class="icon-button" onclick="toggleDarkMode()">&#9790;</button>
+  </div>
+
+  <div class="search-bar">
+    <input type="text" id="searchBar" placeholder="Enter search term..." />
+    <button id="searchButton">Search</button>
+  </div>
+
+  <div id="loading"></div>
+  <div id="results"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
