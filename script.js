@@ -1,32 +1,39 @@
-const mode = new URLSearchParams(window.location.search).get('mode');
-const pageTitle = document.getElementById("pageTitle");
-pageTitle.textContent = mode === 'drug' ? "Search Drugs" : "Search Diseases";
+// Updated script.js for search.html logic only (design untouched)
+
+const searchButton = document.getElementById("searchButton");
+const searchBar = document.getElementById("searchBar");
+const loadingEl = document.getElementById("loading");
+const resultsEl = document.getElementById("results");
+const mode = new URLSearchParams(window.location.search).get("mode") || "drug";
+const subtitleEl = document.getElementById("subtitle");
+subtitleEl.textContent = mode === "drug" ? "Search for Drugs" : "Search for Diseases";
 
 const drugUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSAmHRbGtOBK4wW4vnaOkLmzEXa4ATK1GZML_FsF9s9JNn__ix2JhT2owEC94SEUWP4e9-zIK5_Gpk9/pub?gid=0&single=true&output=csv";
 const diseaseUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSAmHRbGtOBK4wW4vnaOkLmzEXa4ATK1GZML_FsF9s9JNn__ix2JhT2owEC94SEUWP4e9-zIK5_Gpk9/pub?gid=313167351&single=true&output=csv";
+const url = mode === "drug" ? drugUrl : diseaseUrl;
 
-const url = mode === 'drug' ? drugUrl : diseaseUrl;
+const aliasMap = {
+  "high blood pressure": "Hypertension",
+  "high blood sugar": "Diabetes"
+};
 
-document.getElementById("searchButton").addEventListener("click", searchData);
-document.getElementById("searchBar").addEventListener("keypress", (e) => {
+searchButton.addEventListener("click", searchData);
+searchBar.addEventListener("keypress", (e) => {
   if (e.key === "Enter") searchData();
 });
 
-function toggleDarkMode() {
-  document.body.classList.toggle("dark-mode");
-}
-
 function showLoading() {
-  document.getElementById("loading").innerHTML = '<div class="loader"></div>';
-  document.getElementById("results").innerHTML = '';
+  loadingEl.innerHTML = '<div class="loader"></div>';
+  resultsEl.innerHTML = '';
 }
 
 function hideLoading() {
-  document.getElementById("loading").innerHTML = '';
+  loadingEl.innerHTML = '';
 }
 
 function searchData() {
-  const searchTerm = document.getElementById("searchBar").value.trim().toLowerCase();
+  const rawSearchTerm = searchBar.value.trim().toLowerCase();
+  const searchTerm = aliasMap[rawSearchTerm] || rawSearchTerm;
   if (!searchTerm) return;
 
   showLoading();
@@ -34,22 +41,35 @@ function searchData() {
   Papa.parse(url, {
     download: true,
     header: true,
-    complete: function(results) {
+    complete: function (results) {
       hideLoading();
+
       const data = results.data;
       const matches = data.filter(row => {
-        return Object.values(row).some(val => val && val.toLowerCase().includes(searchTerm));
+        if (mode === "drug") {
+          return (
+            (row["Generic Name"] && row["Generic Name"].toLowerCase().includes(searchTerm)) ||
+            (row["Brand Name"] && row["Brand Name"].toLowerCase().includes(searchTerm)) ||
+            (row["Indication"] && row["Indication"].toLowerCase().includes(searchTerm))
+          );
+        } else {
+          return row["Disease Name"] && row["Disease Name"].toLowerCase().includes(searchTerm);
+        }
       });
+
       displayResults(matches);
+    },
+    error: function () {
+      hideLoading();
+      resultsEl.innerHTML = '<p style="color:red;">Failed to load data.</p>';
     }
   });
 }
 
 function displayResults(matches) {
-  const container = document.getElementById("results");
-  container.innerHTML = '';
+  resultsEl.innerHTML = '';
   if (matches.length === 0) {
-    container.innerHTML = '<p>No matches found.</p>';
+    resultsEl.innerHTML = '<p>No matches found.</p>';
     return;
   }
 
@@ -68,18 +88,19 @@ function displayResults(matches) {
         content.textContent = item[key];
 
         btn.addEventListener('click', () => {
-          if (content.classList.contains('active')) {
-            content.classList.remove('active');
-          } else {
-            document.querySelectorAll('.dropdown-content.active').forEach(c => c.classList.remove('active'));
-            content.classList.add('active');
-          }
+          content.classList.toggle('active');
         });
 
         card.appendChild(btn);
         card.appendChild(content);
       }
     });
-    container.appendChild(card);
+    resultsEl.appendChild(card);
   });
 }
+
+// Dark mode toggle
+const darkModeToggle = document.getElementById("darkModeToggle");
+darkModeToggle.addEventListener("click", () => {
+  document.body.classList.toggle("dark-mode");
+});

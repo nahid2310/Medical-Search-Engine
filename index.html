@@ -2,18 +2,78 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Zephyr</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <button id="darkModeToggle" aria-label="Toggle Dark Mode" title="Toggle Dark Mode">&#9790;</button>
+
+  <button id="hamburger" class="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="sidebar" type="button">
+    <span class="bar"></span>
+    <span class="bar"></span>
+    <span class="bar"></span>
+  </button>
+
+  <nav id="sidebar" class="sidebar" aria-label="Sidebar navigation">
+    <ul class="sidebar-menu">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li>
+        <a href="#" id="indexToggle" aria-expanded="false" aria-controls="indexSubmenu">Index &#x25BC;</a>
+        <ul id="indexSubmenu" class="submenu" aria-hidden="true">
+          <li><a href="drugs.html">Drugs</a></li>
+          <li><a href="diseases.html">Diseases</a></li>
+        </ul>
+      </li>
+      <li><a href="#" id="aboutLink">About Us</a></li>
+      <li><a href="#" id="contactLink">Contact Us</a></li>
+    </ul>
+  </nav>
+
   <div class="landing-container">
-    <div class="brand-name">Zephyr</div>
+    <div class="brand-name"><a href="index.html" class="brand-link">Zephyr</a></div>
     <div class="mode-buttons">
       <button onclick="window.location.href='search.html?mode=drug'">Search Drugs</button>
       <button onclick="window.location.href='search.html?mode=disease'">Search Diseases</button>
     </div>
   </div>
+
+  <!-- About Modal -->
+  <div id="aboutModal" class="modal" style="display:none">
+    <div class="modal-content">
+      <span class="close" id="aboutClose">&times;</span>
+      <h2>About Us</h2>
+      <p>Zephyr is a medical search engine designed to help users find reliable drug and disease information.</p>
+    </div>
+  </div>
+
+  <!-- Contact Modal -->
+  <div id="contactModal" class="modal" style="display:none">
+    <div class="modal-content">
+      <span class="close" id="contactClose">&times;</span>
+      <h2>Contact Us</h2>
+      <p>For support or feedback, email us at: <strong>support@zephyrsearch.com</strong></p>
+    </div>
+  </div>
+
+  <script src="sidebar.js"></script>
+  <script>
+    document.getElementById('darkModeToggle').addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+    });
+
+    const aboutModal = document.getElementById("aboutModal");
+    const contactModal = document.getElementById("contactModal");
+    document.getElementById("aboutLink").onclick = () => aboutModal.style.display = "block";
+    document.getElementById("contactLink").onclick = () => contactModal.style.display = "block";
+    document.getElementById("aboutClose").onclick = () => aboutModal.style.display = "none";
+    document.getElementById("contactClose").onclick = () => contactModal.style.display = "none";
+
+    window.onclick = function(event) {
+      if (event.target === aboutModal) aboutModal.style.display = "none";
+      if (event.target === contactModal) contactModal.style.display = "none";
+    };
+  </script>
 </body>
 </html>

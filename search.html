@@ -2,27 +2,359 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Zephyr Search</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <style>
+    body {
+      background-color: #f9fafc;
+      font-family: 'Inter', sans-serif;
+      color: #1a1a1a;
+      margin: 0;
+      padding: 0 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      position: relative;
+    }
+
+    body.dark-mode {
+      background-color: #121212;
+      color: #e0e6f0;
+    }
+
+    .brand-name {
+      font-size: 3rem;
+      font-weight: 700;
+      color: #004080;
+      margin-top: 40px;
+      user-select: none;
+    }
+
+    .brand-name a {
+      color: #004080;
+      text-decoration: none;
+    }
+
+    .brand-name a:hover,
+    .brand-name a:focus {
+      color: #66ccff;
+      outline: none;
+    }
+
+    body.dark-mode .brand-name,
+    body.dark-mode .brand-name a {
+      color: #a0c4ff;
+    }
+
+    .subtitle {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #004080cc;
+      margin-top: 12px;
+      margin-bottom: 30px;
+      user-select: none;
+    }
+
+    body.dark-mode .subtitle {
+      color: #a0c4ffcc;
+    }
+
+    .search-container {
+      width: 100%;
+      max-width: 500px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .search-bar {
+      display: flex;
+      width: 100%;
+    }
+
+    #searchBar {
+      flex: 1;
+      padding: 12px 16px;
+      font-size: 16px;
+      border: 1.5px solid #ccc;
+      border-radius: 8px 0 0 8px;
+      transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+    }
+
+    #searchBar:focus {
+      outline: none;
+      border-color: #004080;
+      box-shadow: 0 0 5px #004080aa;
+      background-color: #fff;
+      color: #000;
+    }
+
+    body.dark-mode #searchBar {
+      border-color: #555;
+      background-color: #2c2c2c;
+      color: #eee;
+    }
+
+    body.dark-mode #searchBar:focus {
+      border-color: #66ccff;
+      box-shadow: 0 0 6px #66ccff88;
+      background-color: #2c2c2c;
+      color: #eee;
+    }
+
+    #searchButton {
+      background-color: #004080;
+      border: none;
+      color: #fff;
+      padding: 0 24px;
+      font-size: 16px;
+      border-radius: 0 8px 8px 0;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    #searchButton:hover,
+    #searchButton:focus {
+      background-color: #002c5a;
+      outline: none;
+    }
+
+    body.dark-mode #searchButton {
+      background-color: #3366cc;
+    }
+
+    body.dark-mode #searchButton:hover,
+    body.dark-mode #searchButton:focus {
+      background-color: #224c99;
+    }
+
+    #loading {
+      margin-top: 30px;
+      text-align: center;
+    }
+
+    #results {
+      margin-top: 20px;
+      width: 100%;
+      max-width: 700px;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+      margin: 20px auto;
+      padding: 20px;
+      width: 90%;
+      max-width: 700px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    body.dark-mode .card {
+      background: #1e1e1e;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.9);
+      color: #d0d7ff;
+    }
+
+    .card h2 {
+      font-size: 22px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 4px;
+      color: #004080;
+    }
+
+    body.dark-mode .card h2 {
+      color: #90b9ff;
+      border-color: #444;
+    }
+
+    .dropdown-btn {
+      width: 100%;
+      background-color: transparent;
+      color: #004080;
+      padding: 8px 0;
+      border: none;
+      text-align: left;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+
+    .dropdown-btn:hover {
+      color: #66ccff;
+    }
+
+    body.dark-mode .dropdown-btn {
+      color: #90b9ff;
+    }
+
+    body.dark-mode .dropdown-btn:hover {
+      color: #cce4ff;
+    }
+
+    .dropdown-content {
+      max-height: 0;
+      overflow: hidden;
+      background-color: #f9f9f9;
+      border-left: 3px solid #004080;
+      border-radius: 4px;
+      font-size: 15px;
+      line-height: 1.5;
+      margin-bottom: 8px;
+      transition: max-height 0.4s ease-in-out, padding 0.4s ease-in-out;
+      padding: 0 10px;
+      color: #1a1a1a;
+    }
+
+    .dropdown-content.active {
+      max-height: 500px;
+      padding: 6px 10px;
+    }
+
+    body.dark-mode .dropdown-content {
+      background-color: #2a2a2a;
+      border-color: #66ccff;
+      color: #d0d7ff;
+    }
+
+    #darkModeToggle {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      font-size: 24px;
+      color: #004080;
+      cursor: pointer;
+      user-select: none;
+      background: transparent;
+      border: none;
+      z-index: 1200;
+    }
+
+    #darkModeToggle:hover,
+    #darkModeToggle:focus {
+      color: #66ccff;
+      outline: none;
+    }
+
+    body.dark-mode #darkModeToggle {
+      color: #a0c4ff;
+    }
+  </style>
 </head>
 <body>
-  <div class="header">
-    <button class="icon-button" onclick="window.location.href='index.html'">&#8592;</button>
-    <h1 id="pageTitle"></h1>
-    <button class="icon-button" onclick="toggleDarkMode()">&#9790;</button>
+  <div class="brand-name"><a href="index.html">Zephyr</a></div>
+  <div id="subtitle" class="subtitle"></div>
+
+  <button id="darkModeToggle" aria-label="Toggle Dark Mode" title="Toggle Dark Mode">&#9790;</button>
+
+  <div class="search-container">
+    <div class="search-bar">
+      <input type="text" id="searchBar" placeholder="Enter search term..." aria-label="Search input" />
+      <button id="searchButton" aria-label="Search">Search</button>
+    </div>
   </div>
 
-  <div class="search-bar">
-    <input type="text" id="searchBar" placeholder="Enter search term..." />
-    <button id="searchButton">Search</button>
-  </div>
-
-  <div id="loading"></div>
+  <div id="loading" aria-live="polite"></div>
   <div id="results"></div>
 
-  <script src="script.js"></script>
+  <script>
+    const mode = new URLSearchParams(window.location.search).get('mode') || 'drug';
+    const subtitleEl = document.getElementById('subtitle');
+    subtitleEl.textContent = mode === 'drug' ? 'Search for Drugs' : 'Search for Diseases';
+
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    darkModeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+    });
+
+    const drugUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSAmHRbGtOBK4wW4vnaOkLmzEXa4ATK1GZML_FsF9s9JNn__ix2JhT2owEC94SEUWP4e9-zIK5_Gpk9/pub?gid=0&single=true&output=csv";
+    const diseaseUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSAmHRbGtOBK4wW4vnaOkLmzEXa4ATK1GZML_FsF9s9JNn__ix2JhT2owEC94SEUWP4e9-zIK5_Gpk9/pub?gid=313167351&single=true&output=csv";
+    const url = mode === 'drug' ? drugUrl : diseaseUrl;
+
+    const searchButton = document.getElementById("searchButton");
+    const searchBar = document.getElementById("searchBar");
+    const loadingEl = document.getElementById("loading");
+    const resultsEl = document.getElementById("results");
+
+    searchButton.addEventListener("click", searchData);
+    searchBar.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") searchData();
+    });
+
+    function showLoading() {
+      loadingEl.innerHTML = '<div class="loader"></div>';
+      resultsEl.innerHTML = '';
+    }
+
+    function hideLoading() {
+      loadingEl.innerHTML = '';
+    }
+
+    function searchData() {
+      const searchTerm = searchBar.value.trim().toLowerCase();
+      if (!searchTerm) return;
+
+      showLoading();
+
+      Papa.parse(url, {
+        download: true,
+        header: true,
+        complete: function (results) {
+          hideLoading();
+
+          const data = results.data;
+          const matches = data.filter(row => {
+            return Object.values(row).some(val => val && val.toLowerCase().includes(searchTerm));
+          });
+
+          displayResults(matches);
+        },
+        error: function () {
+          hideLoading();
+          resultsEl.innerHTML = '<p style="color:red;">Failed to load data.</p>';
+        }
+      });
+    }
+
+    function displayResults(matches) {
+      resultsEl.innerHTML = '';
+      if (matches.length === 0) {
+        resultsEl.innerHTML = '<p>No matches found.</p>';
+        return;
+      }
+
+      matches.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "card";
+        const titleField = mode === 'drug' ? 'Generic Name' : 'Disease Name';
+        card.innerHTML = `<h2>${item[titleField] || 'Result'}</h2>`;
+        Object.keys(item).forEach(key => {
+          if (key !== titleField && item[key]) {
+            const btn = document.createElement("button");
+            btn.className = "dropdown-btn";
+            btn.textContent = key;
+            const content = document.createElement("div");
+            content.className = "dropdown-content";
+            content.textContent = item[key];
+
+            btn.addEventListener('click', () => {
+              content.classList.toggle('active');
+            });
+
+            card.appendChild(btn);
+            card.appendChild(content);
+          }
+        });
+        resultsEl.appendChild(card);
+      });
+    }
+  </script>
 </body>
 </html>

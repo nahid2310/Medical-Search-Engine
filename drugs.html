@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Drugs Index - Zephyr</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1500;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(3px);
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      position: relative;
+    }
+
+    .modal-content h2 {
+      margin-top: 0;
+      font-size: 1.5em;
+      color: #004080;
+    }
+
+    .modal-content p {
+      margin-bottom: 10px;
+      line-height: 1.4;
+    }
+
+    .close {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 24px;
+      font-weight: bold;
+      color: #666;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: #000;
+    }
+
+    body.dark-mode .modal-content {
+      background-color: #1f1f1f;
+      color: #f0f0f0;
+    }
+
+    body.dark-mode .modal-content h2 {
+      color: #a0c4ff;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+</head>
+<body>
+  <button id="darkModeToggle" aria-label="Toggle Dark Mode" title="Toggle Dark Mode">&#9790;</button>
+
+  <nav class="header no-hamburger">
+    <a href="index.html" class="brand-link header-brand">Zephyr</a>
+  </nav>
+
+  <div class="page-title-container">
+    <h1>Drug Index</h1>
+  </div>
+
+  <div style="text-align:center; margin-bottom: 20px;">
+    <input type="text" id="filterInput" placeholder="Filter drugs..." aria-label="Filter drugs"
+      style="width: 80%; max-width: 400px; padding: 10px; font-size: 16px; border-radius: 8px; border: 1px solid #ccc;" />
+  </div>
+
+  <div id="loading" style="text-align:center;" aria-live="polite"></div>
+  <div id="drugList" style="max-width:900px; margin: 0 auto 40px auto; padding: 0 10px;"></div>
+
+  <!-- Modal for Detailed Info -->
+  <div id="infoModal" class="modal">
+    <div class="modal-content">
+      <span class="close" id="modalClose">&times;</span>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <script src="sidebar.js"></script>
+  <script>
+    const drugUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSAmHRbGtOBK4wW4vnaOkLmzEXa4ATK1GZML_FsF9s9JNn__ix2JhT2owEC94SEUWP4e9-zIK5_Gpk9/pub?gid=0&single=true&output=csv";
+
+    const loadingEl = document.getElementById('loading');
+    const drugListEl = document.getElementById('drugList');
+    const filterInput = document.getElementById('filterInput');
+    const modal = document.getElementById('infoModal');
+    const modalBody = document.getElementById('modalBody');
+    const modalClose = document.getElementById('modalClose');
+
+    function showLoading() {
+      loadingEl.innerHTML = '<div class="loader"></div>';
+    }
+
+    function hideLoading() {
+      loadingEl.innerHTML = '';
+    }
+
+    function displayDrugs(drugs) {
+      drugListEl.innerHTML = '';
+
+      if (drugs.length === 0) {
+        drugListEl.innerHTML = '<p>No drugs found.</p>';
+        return;
+      }
+
+      const list = document.createElement('ul');
+      list.style.listStyle = 'none';
+      list.style.padding = '0';
+
+      drugs.forEach(drug => {
+        const li = document.createElement('li');
+        li.style.padding = '6px 0';
+        li.style.cursor = 'pointer';
+        li.textContent = drug['Generic Name'];
+        li.addEventListener('click', () => showDetails(drug));
+        list.appendChild(li);
+      });
+
+      drugListEl.appendChild(list);
+    }
+
+    function showDetails(data) {
+      modalBody.innerHTML = `<h2>${data['Generic Name']}</h2>`;
+      const fields = Object.keys(data).filter(k => k !== 'Generic Name' && data[k] && data[k].trim());
+      fields.forEach(key => {
+        const p = document.createElement('p');
+        p.innerHTML = `<strong>${key}:</strong> ${data[key]}`;
+        modalBody.appendChild(p);
+      });
+      modal.style.display = 'block';
+    }
+
+    modalClose.onclick = () => modal.style.display = 'none';
+    window.onclick = (e) => { if (e.target === modal) modal.style.display = 'none'; };
+
+    filterInput.addEventListener('input', () => {
+      const term = filterInput.value.toLowerCase();
+      if (!window.allDrugs) return;
+
+      const filtered = window.allDrugs.filter(d => d['Generic Name'] && d['Generic Name'].toLowerCase().includes(term));
+      displayDrugs(filtered);
+    });
+
+    function init() {
+      showLoading();
+      Papa.parse(drugUrl, {
+        download: true,
+        header: true,
+        complete: function (results) {
+          hideLoading();
+          window.allDrugs = results.data.filter(d => d['Generic Name']);
+          window.allDrugs.sort((a, b) => a['Generic Name'].localeCompare(b['Generic Name']));
+          displayDrugs(window.allDrugs);
+        },
+        error: () => {
+          hideLoading();
+          drugListEl.innerHTML = '<p style="color:red;">Failed to load drug data.</p>';
+        }
+      });
+    }
+
+    init();
+
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    darkModeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+    });
+  </script>
+</body>
+</html>
