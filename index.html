@@ -3,9 +3,89 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Zephyr</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <title>Limitless</title>
+ <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      overflow: hidden;
+      background: linear-gradient(to bottom right, #f4f9ff, #eaf3ff);
+    }
+    body.dark-mode {
+      background: linear-gradient(to bottom right, #121212, #1c1c1c);
+    }
+    .landing-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      padding-top: 60px;
+    }
+    .brand-name {
+      font-size: 3.2rem;
+      color: #004080;
+      font-weight: 600;
+      letter-spacing: 0.3rem;
+      text-align: center;
+      margin-bottom: 0.5rem;
+      animation: fadeInDown 1.2s ease forwards;
+      opacity: 0;
+    }
+    .slogan {
+      font-size: 1.2rem;
+      text-align: center;
+      margin-bottom: 0.5rem;
+      color: #555;
+      animation: fadeInUp 1.5s ease forwards;
+      opacity: 0;
+    }
+    .tagline {
+      font-style: italic;
+      color: #888;
+      text-align: center;
+      margin-bottom: 2rem;
+      font-size: 1rem;
+    }
+    body.dark-mode .slogan,
+    body.dark-mode .tagline {
+      color: #ccc;
+    }
+    .mode-buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      animation: fadeInUp 1.8s ease forwards;
+      opacity: 0;
+    }
+    .mode-buttons button {
+      font-size: 16px;
+      padding: 12px 24px;
+      border: 1px solid #004080;
+      border-radius: 8px;
+      background-color: white;
+      color: #004080;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .mode-buttons button:hover,
+    .mode-buttons button:focus {
+      background-color: #004080;
+      color: white;
+      outline: none;
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    @keyframes fadeInUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes fadeInDown {
+      from { transform: translateY(-20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  </style>
 </head>
 <body>
   <button id="darkModeToggle" aria-label="Toggle Dark Mode" title="Toggle Dark Mode">&#9790;</button>
@@ -32,10 +112,12 @@
   </nav>
 
   <div class="landing-container">
-    <div class="brand-name"><a href="index.html" class="brand-link">Zephyr</a></div>
+    <div class="brand-name">Limitless</div>
+    <div class="slogan">Your Endless Source of Knowledge</div>
+    <div class="tagline">Explore. Understand. Empower.</div>
     <div class="mode-buttons">
-      <button onclick="window.location.href='search.html?mode=drug'">Search Drugs</button>
-      <button onclick="window.location.href='search.html?mode=disease'">Search Diseases</button>
+      <button onclick="window.location.href='search.html?mode=drug'">💊 Search Drugs</button>
+      <button onclick="window.location.href='search.html?mode=disease'">🦠 Search Diseases</button>
     </div>
   </div>
 
@@ -44,7 +126,7 @@
     <div class="modal-content">
       <span class="close" id="aboutClose">&times;</span>
       <h2>About Us</h2>
-      <p>Zephyr is a medical search engine designed to help users find reliable drug and disease information.</p>
+      <p>Limitless is a medical search engine designed to help users find reliable drug and disease information.</p>
     </div>
   </div>
 
@@ -53,7 +135,7 @@
     <div class="modal-content">
       <span class="close" id="contactClose">&times;</span>
       <h2>Contact Us</h2>
-      <p>For support or feedback, email us at: <strong>support@zephyrsearch.com</strong></p>
+      <p>For support or feedback, email us at: <strong>support@limitlesssearch.com</strong></p>
     </div>
   </div>
 

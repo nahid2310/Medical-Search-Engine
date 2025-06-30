@@ -40,11 +40,17 @@ body.dark-mode #darkModeToggle {
 }
 
 .brand-name {
-  font-size: 3rem;
+  font-family: 'Raleway', sans-serif;
+  font-size: 3.2rem;
   color: #004080;
-  font-weight: 600;
-  margin-bottom: 30px;
+  font-weight: 700;
+  letter-spacing: 0.25rem;
+  text-align: center;
+  margin-bottom: 0.5rem;
+  animation: fadeInDown 1.2s ease forwards;
+  opacity: 0;
 }
+
 
 .brand-link {
   color: #004080;
