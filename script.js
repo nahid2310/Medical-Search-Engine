@@ -1,106 +1,109 @@
-// Updated script.js for search.html logic only (design untouched)
+const diseaseURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSAmHRbGtOBK4wW4vnaOkLmzEXa4ATK1GZML_FsF9s9JNn__ix2JhT2owEC94SEUWP4e9-zIK5_Gpk9/pub?gid=313167351&single=true&output=csv";
+const drugURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSAmHRbGtOBK4wW4vnaOkLmzEXa4ATK1GZML_FsF9s9JNn__ix2JhT2owEC94SEUWP4e9-zIK5_Gpk9/pub?gid=0&single=true&output=csv";
 
-const searchButton = document.getElementById("searchButton");
+let diseases = [], drugs = [], diseaseFuse, drugFuse;
+
+Papa.parse(diseaseURL, {
+  download: true,
+  header: true,
+  complete: res => {
+    diseases = res.data;
+    diseaseFuse = new Fuse(diseases, { keys: ["Disease Name"], threshold: 0.4 });
+  }
+});
+Papa.parse(drugURL, {
+  download: true,
+  header: true,
+  complete: res => {
+    drugs = res.data;
+    drugFuse = new Fuse(drugs, { keys: ["Generic Name", "Brand Name", "Indication"], threshold: 0.4 });
+  }
+});
+
 const searchBar = document.getElementById("searchBar");
 const loadingEl = document.getElementById("loading");
-const resultsEl = document.getElementById("results");
-const mode = new URLSearchParams(window.location.search).get("mode") || "drug";
-const subtitleEl = document.getElementById("subtitle");
-subtitleEl.textContent = mode === "drug" ? "Search for Drugs" : "Search for Diseases";
+const resultsContainer = document.getElementById("resultsContainer");
 
-const drugUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSAmHRbGtOBK4wW4vnaOkLmzEXa4ATK1GZML_FsF9s9JNn__ix2JhT2owEC94SEUWP4e9-zIK5_Gpk9/pub?gid=0&single=true&output=csv";
-const diseaseUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSAmHRbGtOBK4wW4vnaOkLmzEXa4ATK1GZML_FsF9s9JNn__ix2JhT2owEC94SEUWP4e9-zIK5_Gpk9/pub?gid=313167351&single=true&output=csv";
-const url = mode === "drug" ? drugUrl : diseaseUrl;
-
-const aliasMap = {
-  "high blood pressure": "Hypertension",
-  "high blood sugar": "Diabetes"
-};
-
-searchButton.addEventListener("click", searchData);
-searchBar.addEventListener("keypress", (e) => {
-  if (e.key === "Enter") searchData();
+searchBar.addEventListener("keypress", e => {
+  if (e.key === "Enter") runSearch();
 });
 
-function showLoading() {
+function runSearch() {
+  const query = searchBar.value.trim().toLowerCase();
+  resultsContainer.innerHTML = "";
+  if (!query) return;
   loadingEl.innerHTML = '<div class="loader"></div>';
-  resultsEl.innerHTML = '';
+
+  setTimeout(() => {
+    const diseaseResults = diseaseFuse.search(query);
+    const drugResults = drugFuse.search(query);
+    loadingEl.innerHTML = "";
+    renderResults([...diseaseResults, ...drugResults]);
+  }, 300);
 }
 
-function hideLoading() {
-  loadingEl.innerHTML = '';
-}
-
-function searchData() {
-  const rawSearchTerm = searchBar.value.trim().toLowerCase();
-  const searchTerm = aliasMap[rawSearchTerm] || rawSearchTerm;
-  if (!searchTerm) return;
-
-  showLoading();
-
-  Papa.parse(url, {
-    download: true,
-    header: true,
-    complete: function (results) {
-      hideLoading();
-
-      const data = results.data;
-      const matches = data.filter(row => {
-        if (mode === "drug") {
-          return (
-            (row["Generic Name"] && row["Generic Name"].toLowerCase().includes(searchTerm)) ||
-            (row["Brand Name"] && row["Brand Name"].toLowerCase().includes(searchTerm)) ||
-            (row["Indication"] && row["Indication"].toLowerCase().includes(searchTerm))
-          );
-        } else {
-          return row["Disease Name"] && row["Disease Name"].toLowerCase().includes(searchTerm);
-        }
-      });
-
-      displayResults(matches);
-    },
-    error: function () {
-      hideLoading();
-      resultsEl.innerHTML = '<p style="color:red;">Failed to load data.</p>';
-    }
-  });
-}
-
-function displayResults(matches) {
-  resultsEl.innerHTML = '';
-  if (matches.length === 0) {
-    resultsEl.innerHTML = '<p>No matches found.</p>';
+function renderResults(results) {
+  if (results.length === 0) {
+    resultsContainer.innerHTML = "<p>No results found.</p>";
     return;
   }
-
-  matches.forEach(item => {
+  resultsContainer.innerHTML = "";
+  results.forEach(r => {
     const card = document.createElement("div");
-    card.className = "card";
-    const titleField = mode === 'drug' ? 'Generic Name' : 'Disease Name';
-    card.innerHTML = `<h2>${item[titleField] || 'Result'}</h2>`;
-    Object.keys(item).forEach(key => {
-      if (key !== titleField && item[key]) {
-        const btn = document.createElement("button");
-        btn.className = "dropdown-btn";
-        btn.textContent = key;
+    card.className = "result-card";
+
+    const title = document.createElement("h3");
+    title.textContent = r.item["Disease Name"] || r.item["Generic Name"];
+    title.className = "result-title";
+    card.appendChild(title);
+
+    const subContainer = document.createElement("div");
+    subContainer.className = "sub-container collapsed";
+
+    for (const key in r.item) {
+      if (r.item[key] && key !== "Disease Name" && key !== "Generic Name") {
+        const sub = document.createElement("div");
+        sub.className = "subheading";
+        sub.textContent = key;
+
         const content = document.createElement("div");
-        content.className = "dropdown-content";
-        content.textContent = item[key];
+        content.className = "subcontent";
+        content.textContent = r.item[key];
 
-        btn.addEventListener('click', () => {
-          content.classList.toggle('active');
-        });
+        sub.onclick = e => {
+          e.stopPropagation();
+          content.classList.toggle("visible");
+          sub.classList.toggle("open");
+        };
 
-        card.appendChild(btn);
-        card.appendChild(content);
+        subContainer.appendChild(sub);
+        subContainer.appendChild(content);
       }
-    });
-    resultsEl.appendChild(card);
+    }
+
+    title.onclick = () => {
+      if (subContainer.classList.contains("expanded")) {
+        subContainer.classList.remove("expanded");
+        subContainer.classList.add("collapsed");
+        title.classList.remove("expanded");
+      } else {
+        subContainer.classList.remove("collapsed");
+        subContainer.classList.add("expanded");
+        title.classList.add("expanded");
+      }
+    };
+
+    card.appendChild(subContainer);
+    resultsContainer.appendChild(card);
   });
 }
 
-// Dark mode toggle
-const darkModeToggle = document.getElementById("darkModeToggle");
-darkModeToggle.addEventListener("click", () => {
-  document.body.classList.toggle("dark-mode");
-});
+document.getElementById("micButton").onclick = () => {
+  const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+  recognition.lang = "en-US";
+  recognition.onresult = e => {
+    searchBar.value = e.results[0][0].transcript;
+    searchBar.dispatchEvent(new Event("keypress", { key: "Enter" }));
+  };
+  recognition.start();
+};
