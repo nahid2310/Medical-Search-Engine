@@ -139,12 +139,11 @@ body {
   padding: 16px;
   margin: 16px auto;
   max-width: 600px;
-  transition: box-shadow 0.3s ease, transform 0.2s ease;
+  transition: box-shadow 0.3s ease;
 }
 
 .result-card:hover {
   box-shadow: 0 6px 16px rgba(0,0,0,0.1);
-  transform: translateY(-2px);
 }
 
 .result-title {
@@ -262,7 +261,6 @@ body {
   color: #eee;
 }
 
-/* PAGINATION */
 .pagination {
   text-align: center;
   margin: 20px 0;
@@ -286,7 +284,6 @@ body {
   background: #0055aa;
 }
 
-/* BACK + BRAND LINK */
 .back-button {
   position: fixed;
   top: 15px;
@@ -321,7 +318,6 @@ body {
   color: #99ddff;
 }
 
-/* MODAL */
 .modal {
   display: none;
   position: fixed;
@@ -357,7 +353,6 @@ body {
   cursor: pointer;
 }
 
-/* LOADER */
 .loader {
   border: 4px solid #f3f3f3;
   border-top: 4px solid #004080;
@@ -403,12 +398,10 @@ body {
   cursor: pointer;
   font-weight: bold;
   color: #004080;
-  transition: color 0.2s ease, transform 0.2s ease;
 }
 
 .az-letter:hover {
   color: #66ccff;
-  transform: scale(1.2);
 }
 
 .simple-list {
@@ -421,7 +414,6 @@ body {
   text-align: left;
 }
 
-/* DARK MODE SPECIFICS */
 .dark-mode #searchBar {
   background: #333;
   border: 2px solid #555;
@@ -461,11 +453,45 @@ body {
   color: #66ccff;
 }
 
-.toggle-glow {
-  animation: glow 0.3s ease;
-}
-
-@keyframes glow {
-  0% { text-shadow: 0 0 6px #66ccff; }
-  100% { text-shadow: none; }
+/* MOBILE FRIENDLY ADJUSTMENTS */
+@media (max-width: 600px) {
+  .brand-name {
+    font-size: 2rem;
+  }
+  .slogan {
+    font-size: 1rem;
+    text-align: center;
+  }
+  #searchBar {
+    font-size: 14px;
+    padding: 12px 40px 12px 15px;
+  }
+  .result-title {
+    font-size: 1.2rem;
+  }
+  .subheading {
+    font-size: 1rem;
+  }
+  .result-card {
+    margin: 12px 10px;
+    padding: 12px;
+  }
+  .list-item {
+    padding: 10px;
+    font-size: 0.95rem;
+  }
+  .modal-content {
+    width: 95%;
+    padding: 15px;
+  }
+  .hamburger {
+    width: 25px;
+    height: 18px;
+  }
+  .hamburger .bar {
+    height: 2px;
+  }
+  #darkModeToggle {
+    font-size: 20px;
+  }
 }
