@@ -2,91 +2,23 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Diseases Index - Limitless</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Disease Index</title>
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
-  <style>
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1500;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(3px);
-    }
-
-    .modal-content {
-      background-color: #fff;
-      margin: 10% auto;
-      padding: 20px;
-      border-radius: 8px;
-      width: 90%;
-      max-width: 600px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-      position: relative;
-    }
-
-    .modal-content h2 {
-      margin-top: 0;
-      font-size: 1.5em;
-      color: #004080;
-    }
-
-    .modal-content p {
-      margin-bottom: 10px;
-      line-height: 1.4;
-    }
-
-    .close {
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      font-size: 24px;
-      font-weight: bold;
-      color: #666;
-      cursor: pointer;
-    }
-
-    .close:hover {
-      color: #000;
-    }
-
-    body.dark-mode .modal-content {
-      background-color: #1f1f1f;
-      color: #f0f0f0;
-    }
-
-    body.dark-mode .modal-content h2 {
-      color: #a0c4ff;
-    }
-  </style>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 </head>
 <body>
-  <button id="darkModeToggle" aria-label="Toggle Dark Mode" title="Toggle Dark Mode">&#9790;</button>
+  <button id="darkModeToggle">&#9790;</button>
+  <button class="back-button" onclick="location.href='index.html'">&#8592;</button>
+  <h1 class="page-title">
+    <span class="brand-link" onclick="location.href='index.html'">Limitless</span> | Disease Index
+  </h1>
 
-  <nav class="header no-hamburger">
-    <a href="index.html" class="brand-link header-brand">Limitless</a>
-  </nav>
+  <div class="az-bar" id="azBar"></div>
+  <div id="loading"></div>
+  <div id="diseaseList" class="simple-list"></div>
 
-  <div class="page-title-container">
-    <h1>Disease Index</h1>
-  </div>
-
-  <div style="text-align:center; margin-bottom: 20px;">
-    <input type="text" id="filterInput" placeholder="Filter diseases..." aria-label="Filter diseases"
-      style="width: 80%; max-width: 400px; padding: 10px; font-size: 16px; border-radius: 8px; border: 1px solid #ccc;" />
-  </div>
-
-  <div id="loading" style="text-align:center;" aria-live="polite"></div>
-  <div id="diseaseList" style="max-width:900px; margin: 0 auto 40px auto; padding: 0 10px;"></div>
-
-  <!-- Modal for Detailed Info -->
   <div id="infoModal" class="modal">
     <div class="modal-content">
       <span class="close" id="modalClose">&times;</span>
@@ -94,94 +26,76 @@
     </div>
   </div>
 
-  <script src="sidebar.js"></script>
   <script>
-    const diseaseUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSAmHRbGtOBK4wW4vnaOkLmzEXa4ATK1GZML_FsF9s9JNn__ix2JhT2owEC94SEUWP4e9-zIK5_Gpk9/pub?gid=313167351&single=true&output=csv";
+    if (localStorage.getItem("darkMode") === "enabled") {
+      document.body.classList.add("dark-mode");
+    }
 
-    const loadingEl = document.getElementById('loading');
-    const diseaseListEl = document.getElementById('diseaseList');
-    const filterInput = document.getElementById('filterInput');
+    const darkModeToggle = document.getElementById("darkModeToggle");
+    darkModeToggle.onclick = () => {
+      darkModeToggle.classList.add('toggle-glow');
+      setTimeout(() => darkModeToggle.classList.remove('toggle-glow'), 300);
+      document.body.classList.toggle("dark-mode");
+      localStorage.setItem("darkMode", document.body.classList.contains("dark-mode") ? "enabled" : "disabled");
+    };
+
+    const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSAmHRbGtOBK4wW4vnaOkLmzEXa4ATK1GZML_FsF9s9JNn__ix2JhT2owEC94SEUWP4e9-zIK5_Gpk9/pub?gid=313167351&single=true&output=csv";
+    const loading = document.getElementById('loading');
+    const list = document.getElementById('diseaseList');
+    const azBar = document.getElementById('azBar');
     const modal = document.getElementById('infoModal');
     const modalBody = document.getElementById('modalBody');
     const modalClose = document.getElementById('modalClose');
+    let data = [];
 
-    function showLoading() {
-      loadingEl.innerHTML = '<div class="loader"></div>';
-    }
+    loading.innerHTML = '<div class="loader"></div>';
 
-    function hideLoading() {
-      loadingEl.innerHTML = '';
-    }
-
-    function displayDiseases(diseases) {
-      diseaseListEl.innerHTML = '';
-
-      if (diseases.length === 0) {
-        diseaseListEl.innerHTML = '<p>No diseases found.</p>';
-        return;
+    Papa.parse(url, {
+      download: true,
+      header: true,
+      complete: res => {
+        loading.innerHTML = '';
+        data = res.data.filter(d => d['Disease Name']).sort((a,b) => 
+          a['Disease Name'].localeCompare(b['Disease Name'])
+        );
+        renderAZ();
       }
+    });
 
-      const list = document.createElement('ul');
-      list.style.listStyle = 'none';
-      list.style.padding = '0';
-
-      diseases.forEach(disease => {
-        const li = document.createElement('li');
-        li.style.padding = '6px 0';
-        li.style.cursor = 'pointer';
-        li.textContent = disease['Disease Name'];
-        li.addEventListener('click', () => showDetails(disease));
-        list.appendChild(li);
-      });
-
-      diseaseListEl.appendChild(list);
+    function renderAZ() {
+      const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+      azBar.innerHTML = letters.map(l => 
+        `<span class="az-letter" onclick="filterByLetter('${l}')">${l}</span>`
+      ).join('');
     }
 
-    function showDetails(data) {
-      modalBody.innerHTML = `<h2>${data['Disease Name']}</h2>`;
-      const fields = Object.keys(data).filter(k => k !== 'Disease Name' && data[k] && data[k].trim());
-      fields.forEach(key => {
-        const p = document.createElement('p');
-        p.innerHTML = `<strong>${key}:</strong> ${data[key]}`;
-        modalBody.appendChild(p);
+    function filterByLetter(letter) {
+      const filtered = data.filter(d => d['Disease Name'].toUpperCase().startsWith(letter));
+      renderList(filtered);
+    }
+
+    function renderList(items) {
+      list.innerHTML = '';
+      items.forEach(disease => {
+        const div = document.createElement('div');
+        div.className = 'list-item simple-item';
+        div.textContent = disease['Disease Name'];
+        div.onclick = () => {
+          let html = `<h2>${disease['Disease Name']}</h2>`;
+          for (const key in disease) {
+            if (disease[key] && key !== 'Disease Name') {
+              html += `<p><strong>${key}:</strong> ${disease[key]}</p>`;
+            }
+          }
+          modalBody.innerHTML = html;
+          modal.style.display = 'flex';
+        };
+        list.appendChild(div);
       });
-      modal.style.display = 'block';
     }
 
     modalClose.onclick = () => modal.style.display = 'none';
-    window.onclick = (e) => { if (e.target === modal) modal.style.display = 'none'; };
-
-    filterInput.addEventListener('input', () => {
-      const term = filterInput.value.toLowerCase();
-      if (!window.allDiseases) return;
-      const filtered = window.allDiseases.filter(d => d['Disease Name'] && d['Disease Name'].toLowerCase().includes(term));
-      displayDiseases(filtered);
-    });
-
-    function init() {
-      showLoading();
-      Papa.parse(diseaseUrl, {
-        download: true,
-        header: true,
-        complete: function (results) {
-          hideLoading();
-          window.allDiseases = results.data.filter(d => d['Disease Name']);
-          window.allDiseases.sort((a, b) => a['Disease Name'].localeCompare(b['Disease Name']));
-          displayDiseases(window.allDiseases);
-        },
-        error: () => {
-          hideLoading();
-          diseaseListEl.innerHTML = '<p style="color:red;">Failed to load disease data.</p>';
-        }
-      });
-    }
-
-    init();
-
-    const darkModeToggle = document.getElementById('darkModeToggle');
-    darkModeToggle.addEventListener('click', () => {
-      document.body.classList.toggle('dark-mode');
-    });
+    window.onclick = e => { if (e.target === modal) modal.style.display = 'none'; };
   </script>
 </body>
 </html>

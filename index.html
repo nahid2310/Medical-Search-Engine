@@ -2,159 +2,67 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Limitless</title>
- <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
-  <style>
-    body {
-      overflow: hidden;
-      background: linear-gradient(to bottom right, #f4f9ff, #eaf3ff);
-    }
-    body.dark-mode {
-      background: linear-gradient(to bottom right, #121212, #1c1c1c);
-    }
-    .landing-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      min-height: 100vh;
-      padding-top: 60px;
-    }
-    .brand-name {
-      font-size: 3.2rem;
-      color: #004080;
-      font-weight: 600;
-      letter-spacing: 0.3rem;
-      text-align: center;
-      margin-bottom: 0.5rem;
-      animation: fadeInDown 1.2s ease forwards;
-      opacity: 0;
-    }
-    .slogan {
-      font-size: 1.2rem;
-      text-align: center;
-      margin-bottom: 0.5rem;
-      color: #555;
-      animation: fadeInUp 1.5s ease forwards;
-      opacity: 0;
-    }
-    .tagline {
-      font-style: italic;
-      color: #888;
-      text-align: center;
-      margin-bottom: 2rem;
-      font-size: 1rem;
-    }
-    body.dark-mode .slogan,
-    body.dark-mode .tagline {
-      color: #ccc;
-    }
-    .mode-buttons {
-      display: flex;
-      gap: 20px;
-      justify-content: center;
-      animation: fadeInUp 1.8s ease forwards;
-      opacity: 0;
-    }
-    .mode-buttons button {
-      font-size: 16px;
-      padding: 12px 24px;
-      border: 1px solid #004080;
-      border-radius: 8px;
-      background-color: white;
-      color: #004080;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    .mode-buttons button:hover,
-    .mode-buttons button:focus {
-      background-color: #004080;
-      color: white;
-      outline: none;
-      transform: scale(1.05);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    @keyframes fadeInUp {
-      from { transform: translateY(20px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-    @keyframes fadeInDown {
-      from { transform: translateY(-20px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-  </style>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
 </head>
 <body>
-  <button id="darkModeToggle" aria-label="Toggle Dark Mode" title="Toggle Dark Mode">&#9790;</button>
-
-  <button id="hamburger" class="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="sidebar" type="button">
+  <div class="background-gradient"></div>
+  <button id="darkModeToggle">&#9790;</button>
+  <button id="hamburger" class="hamburger" aria-label="Menu">
     <span class="bar"></span>
     <span class="bar"></span>
     <span class="bar"></span>
   </button>
 
-  <nav id="sidebar" class="sidebar" aria-label="Sidebar navigation">
+  <div id="sidebar" class="sidebar">
     <ul class="sidebar-menu">
-      <li><a href="index.html" class="active">Home</a></li>
-      <li>
-        <a href="#" id="indexToggle" aria-expanded="false" aria-controls="indexSubmenu">Index &#x25BC;</a>
-        <ul id="indexSubmenu" class="submenu" aria-hidden="true">
+      <li style="animation-delay: 0.1s;"><a href="index.html">Home</a></li>
+      <li style="animation-delay: 0.2s;"><a href="#" id="indexToggle">Index</a>
+        <ul class="submenu" id="indexSubmenu">
           <li><a href="drugs.html">Drugs</a></li>
           <li><a href="diseases.html">Diseases</a></li>
         </ul>
       </li>
-      <li><a href="#" id="aboutLink">About Us</a></li>
-      <li><a href="#" id="contactLink">Contact Us</a></li>
+      <li style="animation-delay: 0.3s;"><a href="#" id="aboutLink">About</a></li>
+      <li style="animation-delay: 0.4s;"><a href="#" id="contactLink">Contact</a></li>
     </ul>
-  </nav>
+  </div>
 
   <div class="landing-container">
-    <div class="brand-name">Limitless</div>
+    <div class="brand-name" onclick="location.href='index.html'">Limitless</div>
     <div class="slogan">Your Endless Source of Knowledge</div>
-    <div class="tagline">Explore. Understand. Empower.</div>
-    <div class="mode-buttons">
-      <button onclick="window.location.href='search.html?mode=drug'">💊 Search Drugs</button>
-      <button onclick="window.location.href='search.html?mode=disease'">🦠 Search Diseases</button>
+    <div class="search-container">
+      <input type="text" id="searchBar" placeholder="Search for a drug or disease..." />
+      <button id="micButton">🎤</button>
     </div>
+    <div id="loading"></div>
+    <div id="resultsContainer"></div>
   </div>
 
-  <!-- About Modal -->
-  <div id="aboutModal" class="modal" style="display:none">
+  <div id="infoModal" class="modal">
     <div class="modal-content">
-      <span class="close" id="aboutClose">&times;</span>
-      <h2>About Us</h2>
-      <p>Limitless is a medical search engine designed to help users find reliable drug and disease information.</p>
-    </div>
-  </div>
-
-  <!-- Contact Modal -->
-  <div id="contactModal" class="modal" style="display:none">
-    <div class="modal-content">
-      <span class="close" id="contactClose">&times;</span>
-      <h2>Contact Us</h2>
-      <p>For support or feedback, email us at: <strong>support@limitlesssearch.com</strong></p>
+      <span class="close" id="modalClose">&times;</span>
+      <div id="modalBody"></div>
     </div>
   </div>
 
   <script src="sidebar.js"></script>
+  <script src="script.js"></script>
   <script>
-    document.getElementById('darkModeToggle').addEventListener('click', () => {
-      document.body.classList.toggle('dark-mode');
-    });
+    if (localStorage.getItem("darkMode") === "enabled") {
+      document.body.classList.add("dark-mode");
+    }
 
-    const aboutModal = document.getElementById("aboutModal");
-    const contactModal = document.getElementById("contactModal");
-    document.getElementById("aboutLink").onclick = () => aboutModal.style.display = "block";
-    document.getElementById("contactLink").onclick = () => contactModal.style.display = "block";
-    document.getElementById("aboutClose").onclick = () => aboutModal.style.display = "none";
-    document.getElementById("contactClose").onclick = () => contactModal.style.display = "none";
-
-    window.onclick = function(event) {
-      if (event.target === aboutModal) aboutModal.style.display = "none";
-      if (event.target === contactModal) contactModal.style.display = "none";
+    const darkModeToggle = document.getElementById("darkModeToggle");
+    darkModeToggle.onclick = () => {
+      darkModeToggle.classList.add('toggle-glow');
+      setTimeout(() => darkModeToggle.classList.remove('toggle-glow'), 300);
+      document.body.classList.toggle("dark-mode");
+      localStorage.setItem("darkMode", document.body.classList.contains("dark-mode") ? "enabled" : "disabled");
     };
   </script>
 </body>
