@@ -50,5 +50,5 @@ const interactionLink = document.getElementById("interactionLink");
 
 interactionLink.onclick = e => {
   e.preventDefault();
-  window.location.href = "Drug interaction checker/index.html"; // Adjust path as needed
+  window.location.href = "Drug interaction checker/interaction.html"; // Adjust path as needed
 };
