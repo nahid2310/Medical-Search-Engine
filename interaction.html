@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Drug Interaction Checker</title>
+  <link rel="stylesheet" href="inter.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Drug Interaction Checker</h1>
+    <div class="form-group">
+      <input type="text" id="drug1" placeholder="Enter first drug name" />
+      <input type="text" id="drug2" placeholder="Enter second drug name" />
+      <button onclick="checkInteraction()">Check</button>
+    </div>
+    <div id="resultBox" class="result hidden">
+      <h2>Interaction Result</h2>
+      <p id="severity"></p>
+      <p id="mechanism"></p>
+      <p id="note"></p>
+    </div>
+    <div id="noResult" class="hidden">No interaction found for the given combination.</div>
+  </div>
+
+  <script src="engine.js"></script>
+</body>
+</html>
