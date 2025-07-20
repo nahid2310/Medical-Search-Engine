@@ -1,0 +1,240 @@
+[
+  {
+    "drugA": "warfarin",
+    "drugB": "aspirin",
+    "severity": "major",
+    "mechanism": "Both drugs increase bleeding risk due to antiplatelet and anticoagulant effects.",
+    "clinical_note": "Avoid combination unless specifically indicated; monitor INR and signs of bleeding closely."
+  },
+  {
+    "drugA": "atorvastatin",
+    "drugB": "clarithromycin",
+    "severity": "major",
+    "mechanism": "Clarithromycin inhibits CYP3A4, increasing statin levels.",
+    "clinical_note": "Increased risk of rhabdomyolysis; consider temporary discontinuation or switch antibiotic."
+  },
+  {
+    "drugA": "metoprolol",
+    "drugB": "verapamil",
+    "severity": "major",
+    "mechanism": "Additive negative chronotropic and inotropic effects.",
+    "clinical_note": "Can cause bradycardia or heart block; avoid or monitor ECG and heart rate."
+  },
+  {
+    "drugA": "digoxin",
+    "drugB": "furosemide",
+    "severity": "moderate",
+    "mechanism": "Furosemide can cause hypokalemia, increasing digoxin toxicity.",
+    "clinical_note": "Monitor potassium and digoxin levels; supplement K+ if needed."
+  },
+  {
+    "drugA": "lithium",
+    "drugB": "ibuprofen",
+    "severity": "major",
+    "mechanism": "NSAIDs reduce renal lithium clearance, raising serum levels.",
+    "clinical_note": "Risk of lithium toxicity; use alternative analgesic and monitor lithium levels."
+  },
+  {
+    "drugA": "enalapril",
+    "drugB": "spironolactone",
+    "severity": "major",
+    "mechanism": "Additive effect on potassium retention.",
+    "clinical_note": "Monitor serum potassium to avoid hyperkalemia."
+  },
+  {
+    "drugA": "theophylline",
+    "drugB": "ciprofloxacin",
+    "severity": "moderate",
+    "mechanism": "Ciprofloxacin inhibits theophylline metabolism.",
+    "clinical_note": "Monitor theophylline levels for signs of toxicity (nausea, tremor, seizures)."
+  },
+  {
+    "drugA": "phenytoin",
+    "drugB": "doxycycline",
+    "severity": "moderate",
+    "mechanism": "Phenytoin induces hepatic enzymes, reducing doxycycline efficacy.",
+    "clinical_note": "Use alternate antibiotic if efficacy is critical."
+  },
+  {
+    "drugA": "clopidogrel",
+    "drugB": "omeprazole",
+    "severity": "moderate",
+    "mechanism": "Omeprazole inhibits CYP2C19, required for clopidogrel activation.",
+    "clinical_note": "Use pantoprazole instead; monitor for reduced antiplatelet effect."
+  },
+  {
+    "drugA": "fluoxetine",
+    "drugB": "tramadol",
+    "severity": "major",
+    "mechanism": "Additive serotonergic effects increase serotonin syndrome risk.",
+    "clinical_note": "Avoid combination or monitor closely for agitation, tremors, and confusion."
+  },
+  {
+    "drugA": "rifampicin",
+    "drugB": "oral contraceptives",
+    "severity": "major",
+    "mechanism": "Rifampicin induces enzymes reducing contraceptive efficacy.",
+    "clinical_note": "Advise additional contraceptive methods."
+  },
+  {
+    "drugA": "amiodarone",
+    "drugB": "warfarin",
+    "severity": "major",
+    "mechanism": "Amiodarone inhibits warfarin metabolism, increasing INR.",
+    "clinical_note": "Reduce warfarin dose and monitor INR frequently."
+  },
+  {
+    "drugA": "methotrexate",
+    "drugB": "NSAIDs",
+    "severity": "major",
+    "mechanism": "NSAIDs reduce methotrexate clearance, increasing toxicity.",
+    "clinical_note": "Avoid combination or monitor renal function and CBC closely."
+  },
+  {
+    "drugA": "linezolid",
+    "drugB": "SSRIs",
+    "severity": "major",
+    "mechanism": "Both have serotonergic activity, increasing serotonin syndrome risk.",
+    "clinical_note": "Avoid combination; if needed, monitor for agitation, myoclonus, hyperthermia."
+  },
+  {
+    "drugA": "ketoconazole",
+    "drugB": "simvastatin",
+    "severity": "major",
+    "mechanism": "Ketoconazole inhibits CYP3A4, raising simvastatin levels.",
+    "clinical_note": "Use lower statin dose or switch to alternative."
+  },
+  {
+    "drugA": "prednisolone",
+    "drugB": "insulin",
+    "severity": "moderate",
+    "mechanism": "Prednisolone causes hyperglycemia, reducing insulin efficacy.",
+    "clinical_note": "Monitor blood glucose; may require insulin dose adjustment."
+  },
+  {
+    "drugA": "ciprofloxacin",
+    "drugB": "metformin",
+    "severity": "moderate",
+    "mechanism": "May increase metformin levels and lactic acidosis risk.",
+    "clinical_note": "Monitor renal function and signs of acidosis."
+  },
+  {
+    "drugA": "isoniazid",
+    "drugB": "phenytoin",
+    "severity": "moderate",
+    "mechanism": "Isoniazid inhibits phenytoin metabolism.",
+    "clinical_note": "Monitor phenytoin levels and adjust dose if needed."
+  },
+  {
+    "drugA": "sildenafil",
+    "drugB": "nitroglycerin",
+    "severity": "major",
+    "mechanism": "Additive vasodilation leading to severe hypotension.",
+    "clinical_note": "Absolute contraindication; do not co-administer."
+  },
+  {
+    "drugA": "carbamazepine",
+    "drugB": "erythromycin",
+    "severity": "major",
+    "mechanism": "Erythromycin inhibits CYP3A4, increasing carbamazepine levels.",
+    "clinical_note": "Monitor for signs of carbamazepine toxicity (drowsiness, ataxia)."
+  },
+  {
+    "drugA": "chloramphenicol",
+    "drugB": "phenytoin",
+    "severity": "moderate",
+    "mechanism": "Chloramphenicol inhibits phenytoin metabolism.",
+    "clinical_note": "Monitor serum phenytoin and watch for signs of toxicity."
+  },
+  {
+    "drugA": "tetracycline",
+    "drugB": "antacids",
+    "severity": "minor",
+    "mechanism": "Antacids bind tetracycline, reducing absorption.",
+    "clinical_note": "Separate doses by at least 2 hours."
+  },
+  {
+    "drugA": "levothyroxine",
+    "drugB": "calcium carbonate",
+    "severity": "moderate",
+    "mechanism": "Calcium impairs levothyroxine absorption.",
+    "clinical_note": "Administer at least 4 hours apart."
+  },
+  {
+    "drugA": "captopril",
+    "drugB": "potassium chloride",
+    "severity": "major",
+    "mechanism": "Additive hyperkalemia risk.",
+    "clinical_note": "Avoid or monitor potassium levels."
+  },
+  {
+    "drugA": "clozapine",
+    "drugB": "carbamazepine",
+    "severity": "major",
+    "mechanism": "Both can cause bone marrow suppression.",
+    "clinical_note": "Avoid combination due to additive risk of agranulocytosis."
+  },
+  {
+    "drugA": "alcohol",
+    "drugB": "metronidazole",
+    "severity": "major",
+    "mechanism": "Disulfiram-like reaction with flushing, nausea, vomiting.",
+    "clinical_note": "Avoid alcohol during and for 48 hours after metronidazole."
+  },
+  {
+    "drugA": "aspirin",
+    "drugB": "ibuprofen",
+    "severity": "moderate",
+    "mechanism": "Ibuprofen may interfere with aspirin’s antiplatelet effect.",
+    "clinical_note": "Take aspirin 30 minutes before or 8 hours after ibuprofen."
+  },
+  {
+    "drugA": "sodium valproate",
+    "drugB": "lamotrigine",
+    "severity": "major",
+    "mechanism": "Valproate inhibits lamotrigine metabolism, increasing toxicity.",
+    "clinical_note": "Use lower lamotrigine dose and titrate slowly."
+  },
+  {
+    "drugA": "fluconazole",
+    "drugB": "glipizide",
+    "severity": "moderate",
+    "mechanism": "Fluconazole inhibits metabolism, increasing glipizide levels.",
+    "clinical_note": "Monitor for hypoglycemia; adjust dose if needed."
+  },
+  {
+    "drugA": "cimetidine",
+    "drugB": "theophylline",
+    "severity": "moderate",
+    "mechanism": "Cimetidine inhibits theophylline metabolism.",
+    "clinical_note": "Monitor for signs of theophylline toxicity and adjust dose."
+  },
+  {
+    "drugA": "macrolides",
+    "drugB": "QT-prolonging drugs",
+    "severity": "major",
+    "mechanism": "Additive QT prolongation increases torsades risk.",
+    "clinical_note": "Avoid if possible; monitor ECG."
+  },
+  {
+    "drugA": "propranolol",
+    "drugB": "salbutamol",
+    "severity": "moderate",
+    "mechanism": "Beta-blockers blunt bronchodilator response.",
+    "clinical_note": "Avoid in asthmatic patients or use cardioselective beta-blockers."
+  },
+  {
+    "drugA": "allopurinol",
+    "drugB": "azathioprine",
+    "severity": "major",
+    "mechanism": "Allopurinol inhibits xanthine oxidase, increasing azathioprine toxicity.",
+    "clinical_note": "Reduce azathioprine dose to 25% and monitor CBC."
+  },
+  {
+    "drugA": "metformin",
+    "drugB": "contrast agents",
+    "severity": "major",
+    "mechanism": "Risk of lactic acidosis due to renal impairment post-contrast.",
+    "clinical_note": "Hold metformin 48 hours before and after contrast administration."
+  }
+]

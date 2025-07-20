@@ -2,68 +2,27 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Limitless</title>
-  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@600;700&display=swap" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Drug Interaction Checker</title>
   <link rel="stylesheet" href="style.css" />
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
 </head>
 <body>
-  <div class="background-gradient"></div>
-  <button id="darkModeToggle">&#9790;</button>
-  <button id="hamburger" class="hamburger" aria-label="Menu">
-    <span class="bar"></span>
-    <span class="bar"></span>
-    <span class="bar"></span>
-  </button>
-
-  <div id="sidebar" class="sidebar">
-    <ul class="sidebar-menu">
-      <li style="animation-delay: 0.1s;"><a href="index.html">Home</a></li>
-      <li style="animation-delay: 0.2s;"><a href="#" id="indexToggle">Index</a>
-        <ul class="submenu" id="indexSubmenu">
-          <li><a href="drugs.html">Drugs</a></li>
-          <li><a href="diseases.html">Diseases</a></li>
-        </ul>
-      </li>
-      <li style="animation-delay: 0.3s;"><a href="#" id="aboutLink">About</a></li>
-      <li style="animation-delay: 0.4s;"><a href="#" id="contactLink">Contact</a></li>
-    </ul>
-  </div>
-
-  <div class="landing-container">
-    <div class="brand-name" onclick="location.href='index.html'">Limitless</div>
-    <div class="slogan">Your Endless Source of Knowledge</div>
-    <div class="search-container">
-      <input type="text" id="searchBar" placeholder="Search for a drug or disease..." />
-      <button id="micButton">🎤</button>
+  <div class="container">
+    <h1>Drug Interaction Checker</h1>
+    <div class="form-group">
+      <input type="text" id="drug1" placeholder="Enter first drug name" />
+      <input type="text" id="drug2" placeholder="Enter second drug name" />
+      <button onclick="checkInteraction()">Check</button>
     </div>
-    <div id="loading"></div>
-    <div id="resultsContainer"></div>
-  </div>
-
-  <div id="infoModal" class="modal">
-    <div class="modal-content">
-      <span class="close" id="modalClose">&times;</span>
-      <div id="modalBody"></div>
+    <div id="resultBox" class="result hidden">
+      <h2>Interaction Result</h2>
+      <p id="severity"></p>
+      <p id="mechanism"></p>
+      <p id="note"></p>
     </div>
+    <div id="noResult" class="hidden">No interaction found for the given combination.</div>
   </div>
 
-  <script src="sidebar.js"></script>
-  <script src="script.js"></script>
-  <script>
-    if (localStorage.getItem("darkMode") === "enabled") {
-      document.body.classList.add("dark-mode");
-    }
-
-    const darkModeToggle = document.getElementById("darkModeToggle");
-    darkModeToggle.onclick = () => {
-      darkModeToggle.classList.add('toggle-glow');
-      setTimeout(() => darkModeToggle.classList.remove('toggle-glow'), 300);
-      document.body.classList.toggle("dark-mode");
-      localStorage.setItem("darkMode", document.body.classList.contains("dark-mode") ? "enabled" : "disabled");
-    };
-  </script>
+  <script src="engine.js"></script>
 </body>
 </html>

@@ -46,3 +46,9 @@ function openModal(title, content) {
   close.onclick = () => modal.style.display = "none";
   window.onclick = e => { if (e.target === modal) modal.style.display = "none"; };
 }
+const interactionLink = document.getElementById("interactionLink");
+
+interactionLink.onclick = e => {
+  e.preventDefault();
+  window.location.href = "Drug interaction checker/index.html"; // Adjust path as needed
+};
