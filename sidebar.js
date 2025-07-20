@@ -50,5 +50,5 @@ const interactionLink = document.getElementById("interactionLink");
 
 interactionLink.onclick = e => {
   e.preventDefault();
-  window.location.href = "main/interaction.html"; // Adjust path as needed
+  window.location.href = "interaction.html"; // Adjust path as needed
 };
